@@ -6,7 +6,7 @@ global  class OpportunityInactivityBatch implements Database.Batchable<sObject>,
         Date thirtyDaysAgo = Date.today().addDays(-30);
         return Database.getQueryLocator([SELECT Id, Name, LastModifiedDate,
                                         Owner.Email FROM Opportunity WHERE LastModifiedDate <= : thirtyDaysAgo ]);
-
+ 
     }
 
     global void execute(Database.BatchableContext bc, List<Opportunity> scope) {
@@ -28,4 +28,3 @@ global  class OpportunityInactivityBatch implements Database.Batchable<sObject>,
     }
 
 }
-
