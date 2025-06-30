@@ -1,0 +1,104 @@
+<template>
+    <lightning-card title="Create New Contact" icon-name="standard:contact">
+        <div class="slds-p-horizontal_large">
+            <!-- Input Form -->
+            <div class="slds-grid slds-wrap slds-gutters">
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input
+                        label="First Name"
+                        data-field="FirstName"
+                        value={contact.FirstName}
+                        onchange={handleInputChange}
+                        required>
+                    </lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input
+                        label="Last Name"
+                        data-field="LastName"
+                        value={contact.LastName}
+                        onchange={handleInputChange}
+                        required>
+                    </lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input
+                        label="Email"
+                        type="email"
+                        data-field="Email"
+                        value={contact.Email}
+                        onchange={handleInputChange}>
+                    </lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input
+                        label="Phone"
+                        type="tel"
+                        data-field="Phone"
+                        value={contact.Phone}
+                        onchange={handleInputChange}>
+                    </lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input
+                        label="Fax"
+                        data-field="Fax"
+                        value={contact.Fax}
+                        onchange={handleInputChange}>
+                    </lightning-input>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="slds-m-top_large slds-text-align_center">
+                <lightning-button
+                    variant="brand"
+                    label="Save Contact"
+                    onclick={handleSave}
+                    disabled={isLoading}>
+                </lightning-button>
+                <lightning-button
+                    variant="neutral"
+                    label="Reset"
+                    onclick={handleReset}
+                    class="slds-m-left_small">
+                </lightning-button>
+            </div>
+
+            <!-- Loading Spinner -->
+            <template if:true={isLoading}>
+                <div class="slds-m-top_medium">
+                    <lightning-spinner alternative-text="Saving..." size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+            <!-- Saved Contact Display -->
+            <template if:true={showSavedRecord}>
+                <div class="slds-m-top_large">
+                    <lightning-card title="Contact Saved Successfully" icon-name="utility:success">
+                        <div class="slds-p-horizontal_large">
+                            <dl class="slds-list_horizontal slds-wrap">
+                                <dt class="slds-item_label slds-text-color_weak slds-truncate">Name:</dt>
+                                <dd class="slds-item_detail slds-truncate">{savedContact.FirstName} {savedContact.LastName}</dd>
+                                <template if:true={savedContact.Email}>
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate">Email:</dt>
+                                    <dd class="slds-item_detail slds-truncate">{savedContact.Email}</dd>
+                                </template>
+                                <template if:true={savedContact.Phone}>
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate">Phone:</dt>
+                                    <dd class="slds-item_detail slds-truncate">{savedContact.Phone}</dd>
+                                </template>
+                                <template if:true={savedContact.Fax}>
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate">Fax:</dt>
+                                    <dd class="slds-item_detail slds-truncate">{savedContact.Fax}</dd>
+                                </template>
+                                <dt class="slds-item_label slds-text-color_weak slds-truncate">Record ID:</dt>
+                                <dd class="slds-item_detail slds-truncate">{savedContact.Id}</dd>
+                            </dl>
+                        </div>
+                    </lightning-card>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

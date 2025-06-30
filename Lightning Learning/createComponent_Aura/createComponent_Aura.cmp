@@ -1,0 +1,140 @@
+
+<aura:component controller="ContactController"
+                 implements="force:appHostable,
+                            flexipage:availableForAllPageTypes,
+                            flexipage:availableForRecordHome,
+                            force:hasRecordId,
+                            forceCommunity:availableForAllPageTypes,
+                            force:lightningQuickAction" 
+                            access="global">
+
+<!-- Attributes -->
+    <aura:attribute name="contact" type="Contact" default="{'sobjectType': 'Contact', 'FirstName': '', 'LastName': '', 'Email': '', 'Phone': '', 'Fax': ''}"/>
+    <aura:attribute name="savedContact" type="Contact"/>
+    <aura:attribute name="isLoading" type="Boolean" default="false"/>
+    <aura:attribute name="showSavedRecord" type="Boolean" default="false"/>
+    
+    <!-- Events -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div class="slds-card">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <lightning:icon iconName="standard:contact" size="small"/>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                        <span>Create New Contact</span>
+                    </h2>
+                </div>
+            </header>
+        </div>
+        
+        <div class="slds-card__body slds-card__body_inner">
+            <!-- Input Form -->
+            <div class="slds-grid slds-wrap slds-gutters">
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning:input 
+                        label="First Name" 
+                        value="{!v.contact.FirstName}" 
+                        onchange="{!c.handleInputChange}"
+                        name="FirstName"
+                        required="true"/>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning:input 
+                        label="Last Name" 
+                        value="{!v.contact.LastName}" 
+                        onchange="{!c.handleInputChange}"
+                        name="LastName"
+                        required="true"/>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning:input 
+                        label="Email" 
+                        type="email"
+                        value="{!v.contact.Email}" 
+                        onchange="{!c.handleInputChange}"
+                        name="Email"/>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning:input 
+                        label="Phone" 
+                        type="tel"
+                        value="{!v.contact.Phone}" 
+                        onchange="{!c.handleInputChange}"
+                        name="Phone"/>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning:input 
+                        label="Fax" 
+                        value="{!v.contact.Fax}" 
+                        onchange="{!c.handleInputChange}"
+                        name="Fax"/>
+                </div>
+            </div>
+            
+            <!-- Buttons -->
+            <div class="slds-m-top_large slds-text-align_center">
+                <lightning:button 
+                    variant="brand" 
+                    label="Save Contact" 
+                    onclick="{!c.handleSave}"
+                    disabled="{!v.isLoading}"/>
+                <lightning:button 
+                    variant="neutral" 
+                    label="Reset" 
+                    onclick="{!c.handleReset}"
+                    class="slds-m-left_small"/>
+            </div>
+            
+            <!-- Loading Spinner -->
+            <aura:if isTrue="{!v.isLoading}">
+                <div class="slds-m-top_medium slds-align_absolute-center">
+                    <lightning:spinner alternativeText="Saving..." size="medium"/>
+                </div>
+            </aura:if>
+            
+            <!-- Saved Contact Display -->
+            <aura:if isTrue="{!v.showSavedRecord}">
+                <div class="slds-m-top_large">
+                    <div class="slds-card">
+                        <div class="slds-card__header slds-grid">
+                            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                                <div class="slds-media__figure">
+                                    <lightning:icon iconName="utility:success" size="small" variant="success"/>
+                                </div>
+                                <div class="slds-media__body">
+                                    <h2 class="slds-card__header-title">
+                                        <span>Contact Saved Successfully</span>
+                                    </h2>
+                                </div>
+                            </header>
+                        </div>
+                        <div class="slds-card__body slds-card__body_inner">
+                            <dl class="slds-list_horizontal slds-wrap">
+                                <dt class="slds-item_label slds-text-color_weak slds-truncate">Name:</dt>
+                                <dd class="slds-item_detail slds-truncate">{!v.savedContact.FirstName} {!v.savedContact.LastName}</dd>
+                                <aura:if isTrue="{!not(empty(v.savedContact.Email))}">
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate">Email:</dt>
+                                    <dd class="slds-item_detail slds-truncate">{!v.savedContact.Email}</dd>
+                                </aura:if>
+                                <aura:if isTrue="{!not(empty(v.savedContact.Phone))}">
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate">Phone:</dt>
+                                    <dd class="slds-item_detail slds-truncate">{!v.savedContact.Phone}</dd>
+                                </aura:if>
+                                <aura:if isTrue="{!not(empty(v.savedContact.Fax))}">
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate">Fax:</dt>
+                                    <dd class="slds-item_detail slds-truncate">{!v.savedContact.Fax}</dd>
+                                </aura:if>
+                                <dt class="slds-item_label slds-text-color_weak slds-truncate">Record ID:</dt>
+                                <dd class="slds-item_detail slds-truncate">{!v.savedContact.Id}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </aura:if>
+        </div>
+    </div>
+</aura:component>
