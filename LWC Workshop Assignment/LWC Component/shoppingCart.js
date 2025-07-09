@@ -5,6 +5,7 @@ import getProducts from '@salesforce/apex/ShoppingCartController.getProducts';
 import getProductCount from '@salesforce/apex/ShoppingCartController.getProductCount';
 import createPurchaseOrder from '@salesforce/apex/ShoppingCartController.createPurchaseOrder';
 import getProductById from '@salesforce/apex/ShoppingCartController.getProductById';
+import createPurchaseOrder2 from '@salesforce/apex/ShoppingCartController.createPurchaseOrder2';
 
 export default class ShoppingCart extends LightningElement {
     @track purchaseOrders = [];
@@ -104,9 +105,6 @@ export default class ShoppingCart extends LightningElement {
     
     connectedCallback() {
         try {
-            console.log('Component connected');
-            
-            // Initialize arrays if they're undefined
             this.cartItems = this.cartItems || [];
             this.products = this.products || [];
             this.purchaseOrders = this.purchaseOrders || [];
@@ -140,16 +138,20 @@ export default class ShoppingCart extends LightningElement {
                 sortBy: this.sortedBy,
                 sortDirection: this.sortedDirection
             });
+
             this.purchaseOrders = data;
+            
         } catch (error) {
             this.showToastMessage('Error loading purchase orders: ' + error.body.message, 'error');
         }
     }
 
-    
+
     handleAddNewPurchaseOrder() {
+        this.showPurchaseHistory = false;
         this.showProductSection = true;
         this.productCurrentPage = 1;
+        this.showSuccessMessage = false;
         this.loadProducts();
     }
 
@@ -169,6 +171,7 @@ export default class ShoppingCart extends LightningElement {
             });
 
             this.products = data;
+
         } catch (error) {
             this.showToastMessage('Error loading products: ' + error.body.message, 'error');
         }
@@ -232,7 +235,6 @@ export default class ShoppingCart extends LightningElement {
         if (actionName === 'add_to_cart') {
             this.addToCart(row);
         }
-
 
         if (actionName === 'remove_from_cart') {
             this.removeFromCart(row);
@@ -423,28 +425,49 @@ export default class ShoppingCart extends LightningElement {
     }
     
     handleCheckout() {
+        this.showProductSection = false;
         this.isCheckoutMode = true;
     }
     
     handleBackToCart() {
+        this.showProductSection = true;
         this.isCheckoutMode = false;
     }
-
+    
     
     async handlePlaceOrder() {
         try {
-            const plainCartItems = JSON.parse(JSON.stringify(this.cartItems));
-    
-            const totalAmount = plainCartItems.reduce((sum, item) => sum + item.totalPrice, 0);
-    
-            console.log('Sending cartItems:', JSON.stringify(plainCartItems));
-            console.log('totalAmount:', totalAmount);
-            console.log('sendingggg' , JSON.stringify(plainCartItems, null , 2));
-    
-            const result = await createPurchaseOrder({
-                cartItems: plainCartItems,
-                totalAmount: totalAmount
+            console.log("checkpoint 1");
+            console.log("checkpoint : before sednign the line items to the apex");
+            
+            console.log("printing" + JSON.stringify(this.cartItems));
+
+            const lineItems = this.cartItems.map(item => ({
+                Product__c: item.productId,
+                Quantity__c: item.quantity
+            }));
+
+            let productIdList1 = [];
+            let quantityList1 = [];
+            this.cartItems.forEach(i => {
+                productIdList1.push(i.productId);
+                quantityList1.push(i.quantity);
             });
+    
+    
+            console.log('Sending lineItems:', JSON.stringify(lineItems));
+            console.log('totalAmount:', this.totalAmount);
+    
+            console.log("checkpoint 2 - about to call Apex");
+    
+            
+            const result = await createPurchaseOrder2({
+                productIdList: productIdList1,   
+                quantityList: quantityList1
+            });
+    
+            console.log("checkpoint 3 - Apex call successful");
+            console.log('Result:', result);
     
             // Success handling
             this.successMessage = result.replace('SUCCESS: ', '');
@@ -454,21 +477,36 @@ export default class ShoppingCart extends LightningElement {
             this.isCheckoutMode = false;
     
             this.cartItems = [];
+    
+            console.log("checkpoint 4 - UI updated");
+    
             this.loadPurchaseOrderHistory();
     
+            console.log("checkpoint 5 - complete");
+            
         } catch (error) {
-            console.error(error);
-            this.showToastMessage('Error placing order: ' + error.body?.message || error.message, 'error');
+            console.error('Full error object:', error);
+            console.error('Error message:', error.message);
+            console.error('Error body:', error.body);
+            console.error('Error stack:', error.stack);
+            
+            let errorMessage = 'Unknown error occurred';
+            if (error.body && error.body.message) {
+                errorMessage = error.body.message;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            
+            this.showToastMessage('Error placing order: ' + errorMessage, 'error');
         }
     }
     
     handleStartNewOrder() {
+        this.showPurchaseHistory = false;
         this.showSuccessMessage = false;
         this.showProductSection = true;
         this.productCurrentPage = 1;
         this.searchTerm = '';
-        this.loadProducts();
-        this.loadPurchaseOrderHistory();
     }
     
     showToastMessage(message, type) {
@@ -480,29 +518,5 @@ export default class ShoppingCart extends LightningElement {
             this.showToast = false;
         }, 3000);
     }
-    
-    // Computed properties
-    get isFirstPage() {
-        return this.currentPage === 1;
-    }
-    
-    get isLastPage() {
-        return this.currentPage === this.totalPages;
-    }
-    
-    get isProductFirstPage() {
-        return this.productCurrentPage === 1;
-    }
-    
-    get isProductLastPage() {
-        return this.productCurrentPage === this.productTotalPages;
-    }
-    
-    get totalAmount() {
-        return this.cartItems.reduce((total, item) => total + item.totalPrice, 0);
-    }
-    
-    get isCartEmpty() {
-        return this.cartItems.length === 0;
-    }
+     
 }
