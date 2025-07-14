@@ -1,0 +1,12 @@
+<apex:page standardController="Student__c" extensions="StudentPDFController">
+    <apex:form >
+        <apex:pageBlock title="Student Details">
+            <apex:pageBlockSection columns="1">
+                <apex:outputText label="Student Name ">: {!Student__c.Name}</apex:outputText>
+                <apex:outputText label="Class ">: {!Student__c.Class__r.Name}</apex:outputText>
+                <apex:outputText label="Subjects taken ">: {!Student__c.Gender__c}</apex:outputText>
+            </apex:pageBlockSection>
+            <apex:commandButton value="Attach as PDF" action="{!generateAndAttachPdf}"/>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page> 

@@ -1,0 +1,36 @@
+<apex:page controller="AccountSearchPageCtrl" tabStyle="Account">
+    
+    <apex:form id="theForm">
+        <apex:pageBlock title="Accounts Search">
+            
+            <apex:pageBlockSection title="Search Filters" columns="2">
+            	<apex:inputText value="{!pageSize}" label="Page Item Count"/>
+                <apex:inputText value="{!billingCity}" label="Billing City"/>
+                <apex:inputText value="{!billingState}" label="Billing State"/>
+                <apex:inputText value="{!billingCountry}" label="Billing Country"/>
+            </apex:pageBlockSection>
+            <apex:commandButton value="Search" action="{!search}"/>
+            
+            <apex:pageblockTable value="{!accounts}" var="o">
+                <apex:column headerValue="Account Name" value="{!o.Name}"/>
+                <apex:column headerValue="Billing City" value="{!o.BillingCity}"/>
+                <apex:column headerValue="Billing State" value="{!o.BillingState}"/>
+                <apex:column headerValue="Billing Country" value="{!o.BillingCountry}"/>
+            </apex:pageblockTable>
+            
+            <apex:pageBlockSection id="pbsection2">
+                <apex:panelGrid columns="4">
+                    <apex:commandButton action="{!objController.first}" value="First" rendered="{!objController.hasPrevious}" />
+                    <apex:commandButton action="{!objController.previous}" value="Prev" rendered="{!objController.hasPrevious}" />
+                    <apex:commandButton action="{!objController.next}" value="Next" rendered="{!objController.hasNext}" />
+                    <apex:commandButton action="{!objController.last}" value="Last" rendered="{!objController.hasNext}" />
+                </apex:panelGrid>
+            </apex:pageBlockSection>
+            <div class="paginator">
+                <span>
+                    Showing page {!objController.pageNumber} of {!totalPages}
+                </span>
+            </div>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
