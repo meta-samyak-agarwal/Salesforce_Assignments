@@ -2,7 +2,9 @@
     
     <apex:form id="theForm">
         <apex:pageBlock title="Accounts Search">
-            
+
+            <------this is for the searching buttons-------->
+
             <apex:pageBlockSection title="Search Filters" columns="2">
             	<apex:inputText value="{!pageSize}" label="Page Item Count"/>
                 <apex:inputText value="{!billingCity}" label="Billing City"/>
@@ -10,14 +12,20 @@
                 <apex:inputText value="{!billingCountry}" label="Billing Country"/>
             </apex:pageBlockSection>
             <apex:commandButton value="Search" action="{!search}"/>
-            
+
+
+            <------this is for the table we get after we search for-------->
+    
             <apex:pageblockTable value="{!accounts}" var="o">
                 <apex:column headerValue="Account Name" value="{!o.Name}"/>
                 <apex:column headerValue="Billing City" value="{!o.BillingCity}"/>
                 <apex:column headerValue="Billing State" value="{!o.BillingState}"/>
                 <apex:column headerValue="Billing Country" value="{!o.BillingCountry}"/>
             </apex:pageblockTable>
-            
+
+
+            <------this is for the paggiantion buttons-------->
+
             <apex:pageBlockSection id="pbsection2">
                 <apex:panelGrid columns="4">
                     <apex:commandButton action="{!objController.first}" value="First" rendered="{!objController.hasPrevious}" />
