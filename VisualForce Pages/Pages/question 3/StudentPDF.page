@@ -2,6 +2,9 @@
     <apex:form >
         <apex:pageBlock title="Student Details">
             <apex:pageBlockSection columns="1">
+
+                <------these are the things we get in the pdf ------->
+
                 <apex:outputText label="Student Name ">: {!Student__c.Name}</apex:outputText>
                 <apex:outputText label="Class ">: {!Student__c.Class__r.Name}</apex:outputText>
                 <apex:outputText label="Subjects taken ">: {!Student__c.Gender__c}</apex:outputText>
