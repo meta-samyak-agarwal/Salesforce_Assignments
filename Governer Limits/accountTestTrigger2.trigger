@@ -52,7 +52,7 @@ trigger accountTestTrigger2 on Account (before delete, before insert, before upd
     // this will be applicable for the before update and before delete not the before insert
 
     for(Account acc: Trigger.new) {
-        // releted opp to acc 
+        // releted oppList related to the given account on which the trigger is run
         List<Opportunity> releatedAccOpps = oppMap.get(acc.Id);
 
         if(releatedAccOpps != null) {                      // it will be null in case of the before insert 
